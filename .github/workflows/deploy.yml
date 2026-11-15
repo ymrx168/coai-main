@@ -1,4 +1,4 @@
-name: Vite Build & Deploy
+name: Vite Build & Deploy 通用隐式依赖自动修复版
 run-name: ${{ github.actor }} 正在自动构建Vite项目
 on: [push]
 permissions:
@@ -9,7 +9,7 @@ concurrency:
   group: pages
   cancel-in-progress: true
 jobs:
-  install-missing-deps:
+  pre-check:
     runs-on: ubuntu-22.04
     steps:
       - name: 拉取仓库代码
@@ -27,20 +27,48 @@ jobs:
         with:
           version: 9
           run_install: false
-      - name: 云端安装缺失隐式依赖
-        run: pnpm add react-layout-kit
+      - name: 初始化基础依赖
+        run: pnpm install --no-frozen-lockfile
+  auto-fix-missing-deps:
+    needs: pre-check
+    runs-on: ubuntu-22.04
+    if: always()
+    steps:
+      - name: 拉取仓库代码
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+      - name: 配置Node.js 20环境
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+      - name: 官方一键安装pnpm 9
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+          run_install: false
+      - name: 自动识别并安装所有缺失隐式依赖
+        run: |
+          # 自动扫描构建日志中的缺失依赖，批量安装
+          MISSING_DEPS=$(pnpm run build 2>&1 | grep -o "Failed to resolve import \"[^\"]*\"" | cut -d'"' -f2 | sort -u)
+          if [ -n "$MISSING_DEPS" ]; then
+            echo "检测到缺失依赖：$MISSING_DEPS"
+            pnpm add $MISSING_DEPS
+          fi
       - name: 自动提交依赖变更回仓库
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add package.json pnpm-lock.yaml
-          git commit -m "chore: 自动添加缺失隐式依赖 react-layout-kit"
-          git push
-  build:
-    needs: install-missing-deps
+          git commit -m "chore: 自动修复缺失隐式依赖" || echo "没有需要提交的依赖变更"
+          git push || echo "依赖文件已是最新版本，无需推送"
+  final-build-deploy:
+    needs: auto-fix-missing-deps
     runs-on: ubuntu-22.04
     steps:
-      - name: 拉取更新后的仓库代码
+      - name: 拉取最新仓库代码
         uses: actions/checkout@v6
       - name: 配置Node.js 20环境
         uses: actions/setup-node@v4
@@ -54,7 +82,7 @@ jobs:
           run_install: false
       - name: 校验项目目录结构
         run: ls -la
-      - name: 安装项目全量依赖
+      - name: 安装全量依赖
         run: pnpm install --no-frozen-lockfile
       - name: 执行全量类型校验与生产构建
         run: NODE_OPTIONS="--max-old-space-size=8192" pnpm run build
@@ -63,7 +91,7 @@ jobs:
         with:
           path: ./dist
   deploy:
-    needs: build
+    needs: final-build-deploy
     runs-on: ubuntu-22.04
     environment:
       name: github-pages
