@@ -7,7 +7,6 @@ import {
 } from "@/components/ui/card.tsx";
 import { useTranslation } from "react-i18next";
 import { CreditCard, Flame, InfoIcon, Puzzle, QrCode, Sparkles } from "lucide-react";
-import { useEffect } from "react";
 import { Badge } from "@/components/ui/badge.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { toast } from "sonner";
