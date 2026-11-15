@@ -7,13 +7,15 @@ jobs:
     steps:
       - name: 拉取仓库代码
         uses: actions/checkout@v6
-      - name: 配置Node.js 20环境并自动缓存pnpm
+      - name: 配置Node.js 20环境
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'pnpm'
-      - name: 全局安装pnpm包管理器
-        run: npm install -g pnpm
+      - name: 官方一键安装指定版本pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+          run_install: false
       - name: 安装项目依赖
         run: pnpm install
       - name: 执行生产构建
