@@ -8,10 +8,9 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion.tsx";
-import { Badge } from "@/components/ui/badge.tsx";
 
 export type ParagraphProps = {
-  isPro?: boolean;
+
   title?: string;
   children: React.ReactNode;
   className?: string;
@@ -25,7 +24,7 @@ function Paragraph({
   className,
   configParagraph,
   isCollapsed,
-  isPro,
+
 }: ParagraphProps) {
   return (
     <Accordion type={`single`} collapsible={isCollapsed} defaultValue={"item"}>
