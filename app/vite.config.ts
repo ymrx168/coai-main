@@ -32,7 +32,7 @@ export default defineConfig({
     }
   },
   optimizeDeps: {
-    include: ["antd-style", "@lobehub/icons"],
+    include: ["antd-style", "@lobehub/icons", "react-layout-kit"],
     force: true // «ø÷∆¥•∑¢‘§ππΩ®£¨±‹√‚‘∆∂À“¿¿µª∫¥Ê“Ï≥£
   },
   build: {
