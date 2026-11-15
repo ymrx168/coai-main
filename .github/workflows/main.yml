@@ -17,7 +17,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: ./app
-        run: npm install --registry https://registry.npmmirror.com
+        run: npm install --legacy-peer-deps --registry https://registry.npmmirror.com
 
       - name: Build project
         working-directory: ./app
