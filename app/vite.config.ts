@@ -25,6 +25,9 @@ export default defineConfig({
       }
     }
   },
+  optimizeDeps: {
+    include: ["antd-style", "@lobehub/icons"],
+  },
   build: {
     manifest: true,
     chunkSizeWarningLimit: 2048,
