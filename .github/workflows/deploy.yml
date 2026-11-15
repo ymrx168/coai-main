@@ -11,10 +11,10 @@ permissions:
 concurrency:
   group: pages
   cancel-in-progress: true
-# 全局统一指定所有run命令的默认工作目录，完美适配app子目录项目结构
+# 核心修复：直接指定正确的项目绝对路径，彻底消除嵌套错误
 defaults:
   run:
-    working-directory: ./app
+    working-directory: /home/runner/work/coai-main/app
 jobs:
   pre-check:
     runs-on: ubuntu-22.04
@@ -90,7 +90,7 @@ jobs:
       - name: 上传Pages构建产物
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./app/dist
+          path: /home/runner/work/coai-main/app/dist
   deploy:
     needs: final-build-deploy
     runs-on: ubuntu-22.04
