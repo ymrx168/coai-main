@@ -10,7 +10,7 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 export default defineConfig({
-  base: '/coai/', // 替换为你的GitHub仓库名称，解决部署后静态资源404问题
+  base: '/coai-main/', // 替换为你的GitHub仓库名称，解决部署后静态资源404问题
   plugins: [
     react(),
     createHtmlPlugin({
