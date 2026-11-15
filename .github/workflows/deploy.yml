@@ -21,13 +21,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'pnpm'
-      - name: 官方一键安装pnpm 9
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9
-          run_install: false
-      # 核心优化：配置国内腾讯云npm镜像源
+      - name: 全局安装pnpm 9
+        run: npm install -g pnpm@9
       - name: 配置国内pnpm镜像源
         run: pnpm config set registry https://mirrors.cloud.tencent.com/npm/
       - name: 初始化基础依赖
@@ -46,12 +41,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'pnpm'
-      - name: 官方一键安装pnpm 9
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9
-          run_install: false
+      - name: 全局安装pnpm 9
+        run: npm install -g pnpm@9
       - name: 复用国内镜像源配置
         run: pnpm config set registry https://mirrors.cloud.tencent.com/npm/
       - name: 自动识别并安装所有缺失隐式依赖
@@ -78,12 +69,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'pnpm'
-      - name: 官方一键安装pnpm 9
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9
-          run_install: false
+      - name: 全局安装pnpm 9
+        run: npm install -g pnpm@9
       - name: 复用国内镜像源配置
         run: pnpm config set registry https://mirrors.cloud.tencent.com/npm/
       - name: 校验项目目录结构
