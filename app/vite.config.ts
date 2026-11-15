@@ -4,7 +4,6 @@ import path from "path"
 import { createHtmlPlugin } from 'vite-plugin-html' //@ts-ignore
 import { createTranslationPlugin } from "./src/translator"
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     react(),
@@ -17,6 +16,7 @@ export default defineConfig({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
+    mainFields: ['module', 'main'],
   },
   css: {
     preprocessorOptions: {
