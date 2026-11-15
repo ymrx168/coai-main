@@ -1,5 +1,5 @@
-name: Vite Build & Deploy 通用隐式依赖自动修复版
-run-name: ${{ github.actor }} 正在自动构建Vite项目
+name: Vite Build & Deploy 国内镜像优化版
+run-name: ${{ github.actor }} 正在国内加速构建Vite项目
 on: [push]
 permissions:
   contents: write
@@ -27,6 +27,9 @@ jobs:
         with:
           version: 9
           run_install: false
+      # 核心优化：配置国内腾讯云npm镜像源
+      - name: 配置国内pnpm镜像源
+        run: pnpm config set registry https://mirrors.cloud.tencent.com/npm/
       - name: 初始化基础依赖
         run: pnpm install --no-frozen-lockfile
   auto-fix-missing-deps:
@@ -49,9 +52,10 @@ jobs:
         with:
           version: 9
           run_install: false
+      - name: 复用国内镜像源配置
+        run: pnpm config set registry https://mirrors.cloud.tencent.com/npm/
       - name: 自动识别并安装所有缺失隐式依赖
         run: |
-          # 自动扫描构建日志中的缺失依赖，批量安装
           MISSING_DEPS=$(pnpm run build 2>&1 | grep -o "Failed to resolve import \"[^\"]*\"" | cut -d'"' -f2 | sort -u)
           if [ -n "$MISSING_DEPS" ]; then
             echo "检测到缺失依赖：$MISSING_DEPS"
@@ -80,6 +84,8 @@ jobs:
         with:
           version: 9
           run_install: false
+      - name: 复用国内镜像源配置
+        run: pnpm config set registry https://mirrors.cloud.tencent.com/npm/
       - name: 校验项目目录结构
         run: ls -la
       - name: 安装全量依赖
