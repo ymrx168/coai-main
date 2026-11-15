@@ -14,15 +14,20 @@ jobs:
     steps:
       - name: 拉取仓库代码
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
       - name: 配置Node.js 20环境
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: 'pnpm'
       - name: 官方一键安装pnpm 9
         uses: pnpm/action-setup@v4
         with:
           version: 9
           run_install: false
+      - name: 校验项目目录结构
+        run: ls -la
       - name: 安装项目依赖
         run: pnpm install --no-frozen-lockfile
       - name: 执行全量类型校验与生产构建
