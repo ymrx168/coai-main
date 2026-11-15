@@ -8,6 +8,10 @@ permissions:
 concurrency:
   group: pages
   cancel-in-progress: true
+# 全局统一指定所有run命令的默认工作目录，无需在每个步骤重复配置
+defaults:
+  run:
+    working-directory: ./app
 jobs:
   pre-check:
     runs-on: ubuntu-22.04
@@ -82,7 +86,7 @@ jobs:
       - name: 上传Pages构建产物
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./dist
+          path: ./app/dist
   deploy:
     needs: final-build-deploy
     runs-on: ubuntu-22.04
