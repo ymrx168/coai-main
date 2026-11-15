@@ -10,16 +10,17 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v4
 
+      # 【重点】先装pnpm，再装node！
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
       - name: Setup Node 20
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'pnpm'
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9
 
       - name: Install dependencies
         working-directory: ./app
