@@ -1,5 +1,5 @@
 name: Vite Build & Deploy 国内镜像优化版
-run-name: ${{ github.actor }} 正在国内加速构建Vite项目
+run-name: 正在国内加速构建Vite项目
 # 仅在main分支推送时触发，避免开发分支浪费免费构建额度
 on:
   push:
@@ -16,16 +16,16 @@ permissions:
 concurrency:
   group: pages
   cancel-in-progress: true
-# 核心修复：使用官方内置动态工作空间变量，自动适配所有运行环境
-defaults:
-  run:
-    working-directory: ${{ github.workspace }}/app
 jobs:
   pre-check:
     runs-on: ubuntu-22.04
+    # 在Job内部配置工作目录，此时github上下文已完成初始化，不会出现解析报错
+    defaults:
+      run:
+        working-directory: ${{ github.workspace }}/app
     steps:
       - name: 拉取仓库代码
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
           persist-credentials: true
@@ -45,9 +45,13 @@ jobs:
     needs: pre-check
     runs-on: ubuntu-22.04
     if: always()
+    # 在Job内部配置工作目录，完全避开全局节点的时序解析问题
+    defaults:
+      run:
+        working-directory: ${{ github.workspace }}/app
     steps:
       - name: 拉取仓库代码
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
           persist-credentials: true
@@ -84,9 +88,13 @@ jobs:
   final-build-deploy:
     needs: auto-fix-missing-deps
     runs-on: ubuntu-22.04
+    # 在Job内部配置工作目录，确保所有构建步骤路径完全统一
+    defaults:
+      run:
+        working-directory: ${{ github.workspace }}/app
     steps:
       - name: 拉取最新仓库代码
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: 配置Node.js 20环境
         uses: actions/setup-node@v4
         with:
@@ -103,7 +111,7 @@ jobs:
       - name: 上传Pages构建产物
         uses: actions/upload-pages-artifact@v3
         with:
-          # 动态路径匹配产物目录，避免路径错误
+          # 产物路径直接使用内置变量，Job执行阶段可正常识别
           path: ${{ github.workspace }}/app/dist
   deploy:
     needs: final-build-deploy
