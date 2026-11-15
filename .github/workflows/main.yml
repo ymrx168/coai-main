@@ -1,22 +1,30 @@
 name: Vite Build & Deploy
-run-name: ${{ github.actor }} 正在自动构建Vite项目
-on: [push]
+on:
+  push:
+    branches: [ main ]
+
 jobs:
   Build-and-Deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: 拉取仓库代码
-        uses: actions/checkout@v6
-      - name: 配置Node.js 20环境
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Setup Node 20
         uses: actions/setup-node@v4
         with:
           node-version: 20
-      - name: 官方一键安装指定版本pnpm
-        uses: pnpm/action-setup@v4
+
+      - name: Install dependencies
+        working-directory: ./app
+        run: npm install --registry https://registry.npmmirror.com
+
+      - name: Build project
+        working-directory: ./app
+        run: npm run build
+
+      - name: Upload dist artifact
+        uses: actions/upload-artifact@v4
         with:
-          version: 9
-          run_install: false
-      - name: 安装项目依赖
-        run: pnpm install
-      - name: 执行生产构建
-        run: NODE_OPTIONS="--max-old-space-size=8192" pnpm run build
+          name: coai-dist
+          path: app/dist
